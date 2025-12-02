@@ -530,11 +530,11 @@
             const questionHTML = `
                 <div class="question-section">
                     <span class="question-label">🇬🇧 ENGLISH</span>
-                    <div class="question-content">${question["EN:"]}</div>
+                    <div class="question-content">${question["EN"]}</div>
                 </div>
                 <div class="question-section">
                     <span class="question-label">🇹🇼 中文</span>
-                    <div class="question-content question-zh">${question["C:"]}</div>
+                    <div class="question-content question-zh">${question["C"]}</div>
                 </div>
             `;
             document.getElementById('questionText').innerHTML = questionHTML;
@@ -577,7 +577,7 @@
 
             answered = true;
             const question = questionsData[currentQuestionIndex];
-            const correctAnswer = question["Answer__"];
+            const correctAnswer = question["Answer"];
             const correct = selectedOption === correctAnswer;
 
             if (correct) {
