@@ -1,0 +1,650 @@
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>資安題庫 APP</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c5f6f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e8f4f8;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            color: #a8d5e2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(168, 213, 226, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(168, 213, 226, 0.25);
+            color: #d4e8ed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            font-size: 1.5em;
+            color: #a8d5e2;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            background: rgba(239, 154, 154, 0.2);
+            border-radius: 16px;
+            border: 2px solid rgba(239, 154, 154, 0.4);
+            color: #ffcdd2;
+        }
+
+        .card {
+            background: rgba(52, 73, 94, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(168, 213, 226, 0.2);
+            margin-bottom: 20px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .question-number {
+            font-size: 1.1em;
+            background: rgba(168, 213, 226, 0.2);
+            padding: 8px 20px;
+            border-radius: 15px;
+            color: #a8d5e2;
+            font-weight: 600;
+        }
+
+        .question-text {
+            margin-bottom: 30px;
+        }
+
+        .question-section {
+            margin-bottom: 20px;
+            padding: 18px;
+            background: rgba(168, 213, 226, 0.08);
+            border-radius: 12px;
+            border-left: 4px solid rgba(168, 213, 226, 0.4);
+        }
+
+        .question-label {
+            display: inline-block;
+            font-size: 0.8em;
+            background: rgba(168, 213, 226, 0.25);
+            padding: 4px 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: #a8d5e2;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .question-content {
+            font-size: 1.15em;
+            line-height: 1.8;
+            color: #e8f4f8;
+        }
+
+        .question-zh {
+            font-size: 1.05em;
+            line-height: 1.7;
+            color: #b8d4dd;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(168, 213, 226, 0.15);
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .option {
+            background: rgba(168, 213, 226, 0.08);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(168, 213, 226, 0.2);
+            padding: 18px 24px;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            color: #d4e8ed;
+        }
+
+        .option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 213, 226, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+
+        .option:hover {
+            background: rgba(168, 213, 226, 0.15);
+            border-color: rgba(168, 213, 226, 0.4);
+            transform: translateX(5px);
+            color: #fff;
+        }
+
+        .option:hover::before {
+            transform: translateX(100%);
+        }
+
+        .option.selected {
+            background: rgba(129, 199, 214, 0.25);
+            border-color: rgba(129, 199, 214, 0.5);
+            box-shadow: 0 4px 20px rgba(129, 199, 214, 0.2);
+            color: #fff;
+        }
+
+        .option.correct {
+            background: rgba(129, 199, 132, 0.25);
+            border-color: rgba(129, 199, 132, 0.5);
+            color: #c8e6c9;
+        }
+
+        .option.wrong {
+            background: rgba(239, 154, 154, 0.25);
+            border-color: rgba(239, 154, 154, 0.5);
+            color: #ffcdd2;
+        }
+
+        .option-label {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            background: rgba(168, 213, 226, 0.2);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 36px;
+            margin-right: 12px;
+            font-weight: bold;
+            color: #a8d5e2;
+            font-size: 1.1em;
+        }
+
+        .option.correct .option-label,
+        .option.selected.correct .option-label {
+            background: rgba(129, 199, 132, 0.4);
+            color: #a5d6a7;
+        }
+
+        .option.wrong .option-label {
+            background: rgba(239, 154, 154, 0.4);
+            color: #ef9a9a;
+        }
+
+        .option-text {
+            display: inline;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-submit {
+            background: rgba(129, 199, 132, 0.7);
+            color: white;
+            border: 2px solid rgba(129, 199, 132, 0.3);
+        }
+
+        .btn-submit:hover {
+            background: rgba(129, 199, 132, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(129, 199, 132, 0.3);
+        }
+
+        .btn-next, .btn-prev {
+            background: rgba(168, 213, 226, 0.2);
+            color: #d4e8ed;
+            border: 2px solid rgba(168, 213, 226, 0.3);
+        }
+
+        .btn-next:hover, .btn-prev:hover {
+            background: rgba(168, 213, 226, 0.3);
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .explanation {
+            margin-top: 25px;
+            padding: 22px;
+            background: rgba(168, 213, 226, 0.12);
+            border-radius: 14px;
+            border-left: 4px solid rgba(168, 213, 226, 0.5);
+            animation: slideIn 0.4s ease-out;
+            color: #d4e8ed;
+        }
+
+        .explanation-title {
+            font-weight: bold;
+            margin-bottom: 12px;
+            font-size: 1.15em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .explanation-content {
+            line-height: 1.7;
+            font-size: 1.05em;
+        }
+
+        .correct-answer {
+            margin-top: 10px;
+            padding: 10px 15px;
+            background: rgba(129, 199, 132, 0.15);
+            border-radius: 8px;
+            border-left: 3px solid rgba(129, 199, 132, 0.5);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(168, 213, 226, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #81c784, #a5d6a7);
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .question-content {
+                font-size: 1em;
+            }
+
+            .question-zh {
+                font-size: 0.95em;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                min-width: 100%;
+            }
+
+            .option-label {
+                width: 32px;
+                height: 32px;
+                line-height: 32px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔐 資安題庫練習</h1>
+            <div class="stats">
+                <div class="stat-item">📊 總題數: <span id="totalQuestions">-</span></div>
+                <div class="stat-item">✅ 答對: <span id="correctCount">0</span></div>
+                <div class="stat-item">❌ 答錯: <span id="wrongCount">0</span></div>
+            </div>
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div id="appContainer">
+            <div class="loading">⏳ 載入題庫中...</div>
+        </div>
+    </div>
+
+    <script>
+        let questionsData = [];
+        let currentQuestionIndex = 0;
+        let selectedOption = null;
+        let answered = false;
+        let stats = {
+            correct: 0,
+            wrong: 0
+        };
+
+        // 從外部 JSON 檔案載入題庫
+        async function loadQuestions() {
+            try {
+                const response = await fetch('questions.json');
+                
+                if (!response.ok) {
+                    throw new Error('無法載入題庫檔案');
+                }
+                
+                questionsData = await response.json();
+                
+                if (!questionsData || questionsData.length === 0) {
+                    throw new Error('題庫檔案為空');
+                }
+                
+                document.getElementById('totalQuestions').textContent = questionsData.length;
+                initApp();
+                
+            } catch (error) {
+                console.error('載入題庫失敗:', error);
+                document.getElementById('appContainer').innerHTML = `
+                    <div class="card">
+                        <div class="error">
+                            <h2>❌ 載入失敗</h2>
+                            <p style="margin-top: 15px;">${error.message}</p>
+                            <p style="margin-top: 10px; font-size: 0.9em;">
+                                請確認 <code>questions.json</code> 檔案存在於同一目錄下
+                            </p>
+                            <button class="btn btn-submit" onclick="location.reload()" style="margin-top: 20px;">
+                                🔄 重新載入
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function initApp() {
+            document.getElementById('appContainer').innerHTML = `
+                <div class="card">
+                    <div class="question-header">
+                        <div class="question-number" id="questionNumber">Question 1</div>
+                    </div>
+
+                    <div class="question-text" id="questionText"></div>
+
+                    <div class="options" id="optionsContainer"></div>
+
+                    <div id="explanationContainer"></div>
+
+                    <div class="buttons">
+                        <button class="btn btn-prev" onclick="previousQuestion()" id="btnPrev">⬅️ 上一題</button>
+                        <button class="btn btn-submit" onclick="submitAnswer()" id="btnSubmit">✓ 提交答案</button>
+                        <button class="btn btn-next" onclick="nextQuestion()" id="btnNext">下一題 ➡️</button>
+                    </div>
+                </div>
+            `;
+            
+            loadQuestion();
+        }
+
+        function parseOptions(optionsStr) {
+            const options = [];
+            const matches = optionsStr.match(/[A-D]\.\s*[^()]+\([^)]+\)/g);
+            
+            if (matches) {
+                matches.forEach(match => {
+                    options.push(match.trim());
+                });
+            }
+            
+            return options;
+        }
+
+        function loadQuestion() {
+            const question = questionsData[currentQuestionIndex];
+            selectedOption = null;
+            answered = false;
+
+            document.getElementById('questionNumber').textContent = 
+                `Question ${question["Question :"]}`;
+
+            const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+
+            const questionHTML = `
+                <div class="question-section">
+                    <span class="question-label">🇬🇧 ENGLISH</span>
+                    <div class="question-content">${question["EN:"]}</div>
+                </div>
+                <div class="question-section">
+                    <span class="question-label">🇹🇼 中文</span>
+                    <div class="question-content question-zh">${question["C:"]}</div>
+                </div>
+            `;
+            document.getElementById('questionText').innerHTML = questionHTML;
+
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            const options = parseOptions(question["選項: A. B. C. D."]);
+            
+            options.forEach((option, index) => {
+                const optionDiv = document.createElement('div');
+                optionDiv.className = 'option';
+                const letter = String.fromCharCode(65 + index);
+                optionDiv.innerHTML = `
+                    <span class="option-label">${letter}</span>
+                    <span class="option-text">${option.substring(3)}</span>
+                `;
+                optionDiv.onclick = () => selectOption(index, letter);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            document.getElementById('explanationContainer').innerHTML = '';
+            document.getElementById('btnPrev').disabled = currentQuestionIndex === 0;
+            document.getElementById('btnNext').disabled = currentQuestionIndex === questionsData.length - 1;
+            document.getElementById('btnSubmit').style.display = 'block';
+        }
+
+        function selectOption(index, letter) {
+            if (answered) return;
+
+            selectedOption = letter;
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                opt.classList.toggle('selected', i === index);
+            });
+        }
+
+        function submitAnswer() {
+            if (selectedOption === null || answered) return;
+
+            answered = true;
+            const question = questionsData[currentQuestionIndex];
+            const correctAnswer = question["Answer__"];
+            const correct = selectedOption === correctAnswer;
+
+            if (correct) {
+                stats.correct++;
+            } else {
+                stats.wrong++;
+            }
+            document.getElementById('correctCount').textContent = stats.correct;
+            document.getElementById('wrongCount').textContent = stats.wrong;
+
+            const options = document.querySelectorAll('.option');
+            options.forEach((opt, i) => {
+                const letter = String.fromCharCode(65 + i);
+                if (letter === correctAnswer) {
+                    opt.classList.add('correct');
+                }
+                if (letter === selectedOption && !correct) {
+                    opt.classList.add('wrong');
+                }
+            });
+
+            const explanationContainer = document.getElementById('explanationContainer');
+            const explanation = question["Explanation"] || "暫無詳細解釋";
+            
+            explanationContainer.innerHTML = `
+                <div class="explanation">
+                    <div class="explanation-title">
+                        ${correct ? '✅ 答對了!' : '❌ 答錯了!'}
+                    </div>
+                    <div class="correct-answer">
+                        <strong>正確答案:</strong> ${correctAnswer}
+                    </div>
+                    <div class="explanation-content">
+                        <strong>📝 解析:</strong><br>
+                        ${explanation}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('btnSubmit').style.display = 'none';
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < questionsData.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            }
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                loadQuestion();
+            }
+        }
+
+        // 頁面載入時自動載入題庫
+        window.addEventListener('DOMContentLoaded', loadQuestions);
+    </script>
+</body>
+</html>
+```
+
+## 📋 使用說明
+
+### 📁 檔案結構
+```
+你的資料夾/
+├── index.html          (主程式)
+└── questions.json      (題庫資料)
