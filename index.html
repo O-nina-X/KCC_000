@@ -542,7 +542,7 @@
             const optionsContainer = document.getElementById('optionsContainer');
             optionsContainer.innerHTML = '';
             
-            const options = parseOptions(question["選項: A. B. C. D."]);
+            const options = parseOptions(question["選項"]);
             
             options.forEach((option, index) => {
                 const optionDiv = document.createElement('div');
