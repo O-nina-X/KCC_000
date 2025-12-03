@@ -137,69 +137,6 @@
             border-top: 1px solid rgba(168, 213, 226, 0.15);
         }
 
-        /* 圖片容器樣式 */
-        .question-image {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(168, 213, 226, 0.05);
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .question-image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .question-image img:hover {
-            transform: scale(1.02);
-        }
-
-        /* 圖片放大顯示 */
-        .image-modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            animation: fadeIn 0.3s;
-        }
-
-        .image-modal.active {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .image-modal img {
-            max-width: 95%;
-            max-height: 95vh;
-            border-radius: 8px;
-            box-shadow: 0 0 50px rgba(168, 213, 226, 0.3);
-        }
-
-        .image-modal-close {
-            position: absolute;
-            top: 20px;
-            right: 40px;
-            color: #fff;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
-
-        .image-modal-close:hover {
-            color: #a8d5e2;
-        }
-
         .options {
             display: flex;
             flex-direction: column;
@@ -441,11 +378,6 @@
             }
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
         @media (max-width: 600px) {
             .header h1 {
                 font-size: 1.8em;
@@ -477,11 +409,6 @@
                 line-height: 32px;
                 font-size: 1em;
             }
-
-            .image-modal-close {
-                right: 20px;
-                font-size: 30px;
-            }
         }
     </style>
 </head>
@@ -503,12 +430,6 @@
         <div id="appContainer">
             <div class="loading">⏳ 載入題庫中...</div>
         </div>
-    </div>
-
-    <!-- 圖片放大顯示模態框 -->
-    <div class="image-modal" id="imageModal" onclick="closeImageModal()">
-        <span class="image-modal-close">&times;</span>
-        <img src="" id="modalImage" onclick="event.stopPropagation()">
     </div>
 
     <script>
@@ -606,8 +527,7 @@
             const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
             document.getElementById('progressFill').style.width = progress + '%';
 
-            // 建立題目 HTML,包含圖片(如果有的話)
-            let questionHTML = `
+            const questionHTML = `
                 <div class="question-section">
                     <span class="question-label">🇬🇧 ENGLISH</span>
                     <div class="question-content">${question["EN"]}</div>
@@ -617,21 +537,6 @@
                     <div class="question-content question-zh">${question["C"]}</div>
                 </div>
             `;
-
-            // 如果有圖片,加入圖片顯示
-            if (question["Image_Base64"]) {
-                questionHTML += `
-                    <div class="question-image">
-                        <img src="${question["Image_Base64"]}" 
-                             alt="題目圖片" 
-                             onclick="openImageModal('${question["Image_Base64"]}')">
-                        <p style="margin-top: 10px; font-size: 0.9em; color: #a8d5e2;">
-                            💡 點擊圖片可放大查看
-                        </p>
-                    </div>
-                `;
-            }
-
             document.getElementById('questionText').innerHTML = questionHTML;
 
             const optionsContainer = document.getElementById('optionsContainer');
@@ -729,28 +634,17 @@
             }
         }
 
-        // 圖片放大功能
-        function openImageModal(imageSrc) {
-            const modal = document.getElementById('imageModal');
-            const modalImg = document.getElementById('modalImage');
-            modal.classList.add('active');
-            modalImg.src = imageSrc;
-        }
-
-        function closeImageModal() {
-            const modal = document.getElementById('imageModal');
-            modal.classList.remove('active');
-        }
-
-        // ESC 鍵關閉圖片
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeImageModal();
-            }
-        });
-
         // 頁面載入時自動載入題庫
         window.addEventListener('DOMContentLoaded', loadQuestions);
     </script>
 </body>
 </html>
+```
+
+## 📋 使用說明
+
+### 📁 檔案結構
+```
+你的資料夾/
+├── index.html          (主程式)
+└── questions.json      (題庫資料)
